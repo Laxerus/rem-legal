@@ -36,6 +36,10 @@ Botun HTTPS adresi XSystem üzerinden erişilebilir olmalı ve aynı HTTP health
 - Panelin kendisi Discord OAuth izin kontrolünü yapar. Sitenin herkese açık olması yönetim yetkisi vermez.
 - Bu PR kodu hazırlar; Cloudflare Pages ayarlarını, XSystem ortam değişkenlerini veya DNS'i değiştirmez ve canlı yayın yapmaz.
 
+## Kod kontrolü
+
+Depo kökünde `node tools/cloudflare-dashboard-proxy-selftest.mjs` komutu statik yönlendirme, sabit HTTPS upstream, istek/yanıt aktarımı ve sırların depoya yazılmaması kontrollerini çalıştırır. Bu kontrol canlı Cloudflare veya XSystem bağlantısının yerini tutmaz.
+
 ## İlk kontrol listesi
 
 1. Pages build output dizininin `_routes.json` dosyasını içerdiğini doğrula.
