@@ -70,10 +70,17 @@ export async function proxyRemDashboard(context) {
     const upstreamRequest = new Request(target.toString(), init);
     const upstreamResponse = await fetch(upstreamRequest);
     const responseHeaders = new Headers(upstreamResponse.headers);
+    const cookies = typeof upstreamResponse.headers.getSetCookie === "function"
+      ? upstreamResponse.headers.getSetCookie()
+      : [];
+    if (cookies.length > 0) {
+      responseHeaders.delete("set-cookie");
+      for (const cookie of cookies) responseHeaders.append("set-cookie", cookie);
+    }
     responseHeaders.set("cache-control", "no-store");
     responseHeaders.set("x-content-type-options", "nosniff");
 
-    // Preserve status, Location, Set-Cookie and the streamed response body.
+    // Preserve status, Location, every Set-Cookie value and the streamed response body.
     return new Response(upstreamResponse.body, {
       status: upstreamResponse.status,
       statusText: upstreamResponse.statusText,
