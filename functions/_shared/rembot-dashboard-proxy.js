@@ -72,7 +72,9 @@ export async function proxyRemDashboard(context) {
     const responseHeaders = new Headers(upstreamResponse.headers);
     const cookies = typeof upstreamResponse.headers.getSetCookie === "function"
       ? upstreamResponse.headers.getSetCookie()
-      : [];
+      : typeof upstreamResponse.headers.getAll === "function"
+        ? upstreamResponse.headers.getAll("set-cookie")
+        : [];
     if (cookies.length > 0) {
       responseHeaders.delete("set-cookie");
       for (const cookie of cookies) responseHeaders.append("set-cookie", cookie);
