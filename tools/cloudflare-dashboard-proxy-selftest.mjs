@@ -22,6 +22,7 @@ assert.match(proxy, /redirect: "manual"/);
 assert.match(proxy, /init\.body = request\.body/);
 assert.match(proxy, /new Response\(upstreamResponse\.body/);
 assert.match(proxy, /getSetCookie/);
+assert.match(proxy, /getAll\\(\"set-cookie\"\\)/);
 assert.match(proxy, /responseHeaders\.append\("set-cookie", cookie\)/);
 assert.match(proxy, /cache-control.*no-store/);
 assert.match(homepage, /href="\/manage">Yönetim Paneli/);
