@@ -26,6 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Check Pages Function syntax
+        run: |
+          node --input-type=module --check < functions/_shared/rembot-dashboard-proxy.js
+          node --input-type=module --check < functions/manage/index.js
+          node --input-type=module --check < 'functions/manage/[[path]].js'
       - name: Check legal pages
         run: node tools/legal-pages-selftest.mjs
       - name: Check Cloudflare dashboard proxy
