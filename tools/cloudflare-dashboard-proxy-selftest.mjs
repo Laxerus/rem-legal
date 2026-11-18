@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const proxy = fs.readFileSync('functions/_shared/rembot-dashboard-proxy.js', 'utf8');
+const exactRoute = fs.readFileSync('functions/manage/index.js', 'utf8');
+const nestedRoute = fs.readFileSync('functions/manage/[[path]].js', 'utf8');
+const routes = JSON.parse(fs.readFileSync('_routes.json', 'utf8'));
+const homepage = fs.readFileSync('index.html', 'utf8');
+const docs = fs.readFileSync('docs/cloudflare-dashboard.md', 'utf8');
+
+assert.deepEqual(routes.include, ['/manage', '/manage/*']);
+assert.deepEqual(routes.exclude, []);
+assert.match(exactRoute, /proxyRemDashboard\(context\)/);
+assert.match(nestedRoute, /proxyRemDashboard\(context\)/);
+assert.match(proxy, /REMBOT_DASHBOARD_UPSTREAM_ORIGIN/);
+assert.match(proxy, /origin\.protocol !== "https:"/);
+assert.match(proxy, /origin\.pathname !== "\/"/);
+assert.match(proxy, /incoming\.pathname !== "\/manage" && !incoming\.pathname\.startsWith\("\/manage\/"\)/);
+assert.match(proxy, /headers\.delete\("host"\)/);
+assert.match(proxy, /headers\.set\("x-forwarded-host", incoming\.host\)/);
+assert.match(proxy, /redirect: "manual"/);
+assert.match(proxy, /init\.body = request\.body/);
+assert.match(proxy, /new Response\(upstreamResponse\.body/);
+assert.match(proxy, /cache-control.*no-store/);
+assert.match(homepage, /href="\/manage">Yönetim Paneli/);
+assert.match(docs, /Client Secret ve session secret bu Git deposuna/);
+console.log('PASS Cloudflare Pages routes are restricted to /manage');
+console.log('PASS proxy validates a fixed HTTPS upstream and preserves dashboard request/response flow');
+console.log('PASS the static legal pages remain outside the proxy routes');
+console.log('PASS secrets are documented as runtime-only values');
